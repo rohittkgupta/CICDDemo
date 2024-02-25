@@ -1,0 +1,49 @@
+name: Development Workflow
+on:
+  pull_request:
+    branches: 
+      - dev/CICDDemo
+
+env:
+  project_name: CICDDemo
+  ORCH_FOLDER: IT
+  ORCH_URL: https://cloud.uipath.com/
+  ORCH_TENANT: DefaultTenant
+  ORCH_CLIENT_ID: ${{ secrets.ORCH_CLIENT_ID_DEV }}
+  ORCH_USER_KEY: ${{ secrets.ORCH_USER_KEY_DEV }}
+  ORCH_ACC_NAME: novigsumfwqk
+  CLI_URL: https://cloud.uipath.com/
+jobs:
+ print-details:
+    runs-on: windows-latest
+    steps:
+      - name: echo-default-env-variables
+        run: |
+          echo "Home: ${HOME}"
+          echo "GITHUB_WORKFLOW: ${GITHUB_WORKFLOW}"
+          echo "GITHUB_ACTIONS: ${GITHUB_ACTIONS}"
+          echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+          echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+          echo "GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME}"
+          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+          echo "GITHUB_SHA: ${GITHUB_SHA}"
+          echo "GITHUB_REF: ${GITHUB_REF}"
+cleaner:
+  runs-on: windows-latest
+    steps:
+      - name: Runner workspace path
+        run: |
+          echo "cleaning up previous run"
+          rm -rf "${{ github.workspace }}"
+ Build-uipath-nuget-pacakge:
+    needs: cleaner
+    runs-on: windows-latest
+    steps:            
+      # Checkout code from this repo
+      - name: Checkout out repository Code
+        uses: actions/checkout@v2      
+      # Facilitate the UiPath CLI in the github artifacts
+      - name: Build Nuget Package
+        shell: pwsh
+        run: |
+                 
